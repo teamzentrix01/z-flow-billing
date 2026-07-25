@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: buyzaar-sync-backend
+    env: node
+    plan: starter
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_SSL
+        value: "true"
+      - key: PG_POOL_MAX
+        value: "5"
+      - key: PG_IDLE_TIMEOUT_MS
+        value: "10000"
+      - key: PG_CONNECT_TIMEOUT_MS
+        value: "10000"
