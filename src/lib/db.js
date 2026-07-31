@@ -156,7 +156,15 @@ export async function provisionTenantDatabase(databaseName) {
   const templateName = String(process.env.TRIAL_TEMPLATE_DB || 'z_flow_trial_template');
   if (!/^[a-zA-Z0-9_]+$/.test(templateName)) throw new Error('Invalid trial template database name');
 
-  const maintenanceConfig = tenantPoolConfig(safeDatabaseName);
+  const directDatabaseUrl = process.env.DATABASE_URL_UNPOOLED || '';
+  const maintenanceConfig = directDatabaseUrl
+    ? {
+        connectionString: directDatabaseUrl,
+        ssl: String(process.env.DB_SSL || '').toLowerCase() === 'true' || /sslmode=require/i.test(directDatabaseUrl)
+          ? { rejectUnauthorized: false }
+          : false,
+      }
+    : tenantPoolConfig(safeDatabaseName);
   if (maintenanceConfig.connectionString) {
     const url = new URL(maintenanceConfig.connectionString);
     url.pathname = `/${process.env.PG_MAINTENANCE_DB || 'postgres'}`;
