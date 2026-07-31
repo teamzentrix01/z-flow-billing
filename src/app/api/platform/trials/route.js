@@ -81,6 +81,7 @@ export async function POST(request) {
       maxUsers: body.maxUsers,
       maxStores: body.maxStores,
       createdBy: auth.user.id,
+      permissions: body.permissions,
     });
     return NextResponse.json(
       {

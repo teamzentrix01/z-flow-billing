@@ -261,7 +261,7 @@ export async function POST(request) {
       permissions = ['*'];
     }
     if (trialLogin) {
-      permissions = ['*'];
+      permissions = Array.isArray(trialLogin.permissions) ? trialLogin.permissions : [];
     }
 
     // ============================================

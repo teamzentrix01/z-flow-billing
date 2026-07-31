@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import MainLayout from '@/components/MainLayout';
+import { DEFAULT_TRIAL_PERMISSIONS, TRIAL_PERMISSION_GROUPS } from '@/lib/trialPermissions';
 
 const initialForm = {
   organizationName: '',
@@ -13,6 +14,7 @@ const initialForm = {
   trialDays: 14,
   maxUsers: 3,
   maxStores: 1,
+  permissions: DEFAULT_TRIAL_PERMISSIONS,
 };
 
 function formatDate(value) {
@@ -32,6 +34,8 @@ function statusClasses(status) {
 export default function TrialAccountsPage() {
   const [form, setForm] = useState(initialForm);
   const [trials, setTrials] = useState([]);
+  const [requests, setRequests] = useState([]);
+  const [selectedRequest, setSelectedRequest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -53,12 +57,31 @@ export default function TrialAccountsPage() {
     }
   }, []);
 
+  const loadRequests = useCallback(async () => {
+    try {
+      const response = await fetch('/api/platform/trial-requests', { cache: 'no-store' });
+      const payload = await response.json();
+      if (response.ok) setRequests(payload.data || []);
+    } catch {}
+  }, []);
+
   useEffect(() => {
     loadTrials();
-  }, [loadTrials]);
+    loadRequests();
+  }, [loadTrials, loadRequests]);
 
   const setField = (field, value) => {
     setForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const togglePermissionGroup = (group) => {
+    const enabled = group.permissions.every((permission) => form.permissions.includes(permission));
+    setField(
+      'permissions',
+      enabled
+        ? form.permissions.filter((permission) => !group.permissions.includes(permission))
+        : [...new Set([...form.permissions, ...group.permissions])],
+    );
   };
 
   const createTrial = async (event) => {
@@ -67,10 +90,10 @@ export default function TrialAccountsPage() {
     setError('');
     setMessage('');
     try {
-      const response = await fetch('/api/platform/trials', {
-        method: 'POST',
+      const response = await fetch(selectedRequest ? '/api/platform/trial-requests' : '/api/platform/trials', {
+        method: selectedRequest ? 'PATCH' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify(selectedRequest ? { id: selectedRequest.id, action: 'approve', ...form } : form),
       });
       const payload = await response.json();
       if (!response.ok || payload.success === false) {
@@ -78,7 +101,9 @@ export default function TrialAccountsPage() {
       }
       setMessage(`Trial created. User ID: ${payload.data.loginId}`);
       setForm(initialForm);
+      setSelectedRequest(null);
       await loadTrials();
+      await loadRequests();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -139,6 +164,49 @@ export default function TrialAccountsPage() {
           </div>
         )}
 
+        <section className="rounded-3xl border border-slate-200 bg-white p-6">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold text-[#0b0d12]">Verified website requests</h2>
+              <p className="mt-1 text-xs text-slate-500">
+                Select a request, choose permissions below, then approve and email access.
+              </p>
+            </div>
+            <button type="button" onClick={loadRequests} className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold">
+              Refresh
+            </button>
+          </div>
+          <div className="mt-4 grid gap-3 lg:grid-cols-2">
+            {requests.filter((item) => item.status === 'verified').map((item) => (
+              <button
+                type="button"
+                key={item.id}
+                onClick={() => {
+                  setSelectedRequest(item);
+                  setForm((current) => ({
+                    ...current,
+                    organizationName: item.organization_name,
+                    name: item.owner_name,
+                    email: item.email,
+                    phone: item.phone || '',
+                    loginId: item.email.split('@')[0].replace(/[^a-z0-9]+/gi, '-').toLowerCase(),
+                    maxUsers: item.expected_users,
+                    maxStores: item.expected_stores,
+                    password: '',
+                  }));
+                }}
+                className={`rounded-2xl border p-4 text-left ${selectedRequest?.id === item.id ? 'border-black bg-slate-50' : 'border-slate-200'}`}
+              >
+                <p className="font-semibold text-slate-900">{item.organization_name}</p>
+                <p className="mt-1 text-xs text-slate-500">{item.owner_name} · {item.email}</p>
+              </button>
+            ))}
+            {!requests.some((item) => item.status === 'verified') && (
+              <p className="text-sm text-slate-500">No verified requests waiting.</p>
+            )}
+          </div>
+        </section>
+
         <div className="grid gap-7 xl:grid-cols-[420px_minmax(0,1fr)]">
           <form
             onSubmit={createTrial}
@@ -161,13 +229,14 @@ export default function TrialAccountsPage() {
                 ['name', 'Owner name', 'Account owner', 'text', true],
                 ['email', 'Email (optional)', 'owner@company.com', 'email', false],
                 ['phone', 'Phone (optional)', '9876543210', 'text', false],
-                ['password', 'Temporary password', 'Minimum 8 characters', 'password', true],
+                ['password', 'Temporary password', selectedRequest ? 'Generated and emailed automatically' : 'Minimum 8 characters', 'password', !selectedRequest],
               ].map(([field, label, placeholder, type, required]) => (
                 <label key={field} className="block">
                   <span className="mb-1.5 block text-xs font-semibold text-slate-700">{label}</span>
                   <input
                     type={type}
                     required={required}
+                    disabled={field === 'password' && Boolean(selectedRequest)}
                     value={form[field]}
                     onChange={(event) => setField(field, event.target.value)}
                     placeholder={placeholder}
@@ -196,6 +265,37 @@ export default function TrialAccountsPage() {
                   </label>
                 ))}
               </div>
+
+              <fieldset>
+                <legend className="mb-2 text-xs font-semibold text-slate-700">
+                  Trial permissions
+                </legend>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {TRIAL_PERMISSION_GROUPS.map((group) => {
+                    const checked = group.permissions.every((permission) =>
+                      form.permissions.includes(permission),
+                    );
+                    return (
+                      <label
+                        key={group.id}
+                        className="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 px-3 py-2.5 text-xs font-semibold text-slate-700"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => togglePermissionGroup(group)}
+                          className="h-4 w-4 accent-black"
+                        />
+                        {group.label}
+                      </label>
+                    );
+                  })}
+                </div>
+                <p className="mt-2 text-[11px] leading-5 text-slate-500">
+                  Only selected modules are available. Platform Admin and destructive system
+                  controls are always blocked.
+                </p>
+              </fieldset>
             </div>
 
             <button
@@ -203,7 +303,11 @@ export default function TrialAccountsPage() {
               disabled={saving}
               className="mt-6 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#0b0d12] px-5 text-sm font-bold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {saving ? 'Provisioning workspace…' : 'Create isolated trial'}
+              {saving
+                ? 'Provisioning workspace…'
+                : selectedRequest
+                  ? 'Approve & email access'
+                  : 'Create isolated trial'}
               {!saving && <i className="ti ti-arrow-right" />}
             </button>
           </form>

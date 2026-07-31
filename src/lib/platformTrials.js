@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { masterQuery, provisionTenantDatabase, tenantQuery } from '@/lib/db';
 import { enterTenantContext } from '@/lib/tenant-context';
+import { sanitizeTrialPermissions } from '@/lib/trialPermissions';
 
 const TRIAL_STATUSES = new Set(['provisioning', 'active', 'expired', 'suspended', 'paid']);
 
@@ -31,6 +32,7 @@ export async function ensurePlatformTrialSchema() {
       name VARCHAR(120) NOT NULL,
       phone VARCHAR(30),
       password_hash TEXT NOT NULL,
+      permissions JSONB NOT NULL DEFAULT '[]'::jsonb,
       is_active BOOLEAN NOT NULL DEFAULT TRUE,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -44,6 +46,8 @@ export async function ensurePlatformTrialSchema() {
       WHERE email IS NOT NULL AND email <> '';
     CREATE INDEX IF NOT EXISTS platform_tenants_status_expiry
       ON platform_tenants (status, trial_ends_at);
+    ALTER TABLE platform_trial_users
+      ADD COLUMN IF NOT EXISTS permissions JSONB NOT NULL DEFAULT '[]'::jsonb;
   `);
 }
 
@@ -77,6 +81,7 @@ export async function findTrialLogin(identifier) {
        trial_user.name,
        trial_user.phone,
        trial_user.password_hash,
+       trial_user.permissions,
        trial_user.is_active,
        tenant.id AS tenant_id,
        tenant.organization_name,
@@ -140,6 +145,7 @@ export async function createTrialTenant({
   maxUsers = 3,
   maxStores = 1,
   createdBy,
+  permissions,
 }) {
   await ensurePlatformTrialSchema();
 
@@ -149,6 +155,7 @@ export async function createTrialTenant({
   if (String(password || '').length < 8) throw new Error('Password must contain at least 8 characters');
 
   const safeDays = Math.min(Math.max(Number(trialDays) || 14, 1), 90);
+  const safePermissions = sanitizeTrialPermissions(permissions);
   const databaseName = assertDatabaseName(
     `zflow_trial_${normalizedSlug.replace(/-/g, '_')}_${Date.now().toString(36)}`,
   );
@@ -204,8 +211,8 @@ export async function createTrialTenant({
 
     await masterQuery(
       `INSERT INTO platform_trial_users
-         (tenant_id, tenant_user_id, login_id, email, name, phone, password_hash)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+         (tenant_id, tenant_user_id, login_id, email, name, phone, password_hash, permissions)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb)`,
       [
         tenant.id,
         owner.id,
@@ -214,6 +221,7 @@ export async function createTrialTenant({
         owner.name,
         owner.phone,
         passwordHash,
+        JSON.stringify(safePermissions),
       ],
     );
     await masterQuery(
