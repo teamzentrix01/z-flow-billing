@@ -18,10 +18,10 @@ const Icons = {
 };
 
 const quickActions = [
-  { label: 'Open POS', desc: 'Fast checkout', icon: Icons.pos, path: '/sales/pos', bg: 'linear-gradient(135deg, #B00000, #B00000)' },
-  { label: 'Master Dashboard', desc: 'View analytics', icon: Icons.dashboard, path: '/home/master-dashboard', bg: 'linear-gradient(135deg, #539D62, #477f53)' },
-  { label: 'Returns', desc: 'Manage returns', icon: Icons.returns, path: '/sales/returns', bg: 'linear-gradient(135deg, #f59e0b, #b45309)' },
-  { label: 'Full POS', desc: 'Advanced billing', icon: Icons.cart, path: '/sales/pos', bg: 'linear-gradient(135deg, #dc2626, #920000)' },
+  { label: 'Open POS', desc: 'Fast checkout', icon: Icons.pos, path: '/sales/pos', bg: '#0b0d12' },
+  { label: 'Master Dashboard', desc: 'View analytics', icon: Icons.dashboard, path: '/home/master-dashboard', bg: '#1f2937' },
+  { label: 'Returns', desc: 'Manage returns', icon: Icons.returns, path: '/sales/returns', bg: '#111827' },
+  { label: 'Full POS', desc: 'Advanced billing', icon: Icons.cart, path: '/sales/pos', bg: '#334155' },
 ];
 
 function formatCurrency(value) {
@@ -95,15 +95,16 @@ export default function RootPage() {
 
   const kpiData = [
     { label: 'Total Revenue', value: formatCurrency(stats.sales.totalRevenue), icon: Icons.rupee, iconBg: '#fff7ed', iconColor: '#ea580c' },
-    { label: 'Transactions', value: String(stats.sales.totalSales), icon: Icons.receipt, iconBg: '#eff6ff', iconColor: '#B00000' },
-    { label: 'Customers', value: String(stats.customers), icon: Icons.users, iconBg: '#f0fdf4', iconColor: '#539D62' },
-    { label: 'Tax Collected', value: formatCurrency(stats.sales.totalTax), icon: Icons.chartPie, iconBg: '#faf5ff', iconColor: '#B00000' },
+    { label: 'Transactions', value: String(stats.sales.totalSales), icon: Icons.receipt, iconBg: '#f1f5f9', iconColor: '#0b0d12' },
+    { label: 'Customers', value: String(stats.customers), icon: Icons.users, iconBg: '#f1f5f9', iconColor: '#0b0d12' },
+    { label: 'Tax Collected', value: formatCurrency(stats.sales.totalTax), icon: Icons.chartPie, iconBg: '#f1f5f9', iconColor: '#0b0d12' },
   ];
 
   return (
     <MainLayout>
       <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#111827', letterSpacing: '-0.02em', margin: 0 }}>Welcome to Buyzaar Sync</h1>
+        <p style={{ color: '#475569', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', margin: '0 0 0.65rem' }}>Connected retail operations</p>
+        <h1 style={{ fontSize: '2.25rem', fontWeight: 700, color: '#0b0d12', letterSpacing: '-0.04em', margin: 0 }}>Welcome to Z Flow</h1>
         <p style={{ color: '#4b5563', fontSize: '0.95rem', fontWeight: 500, marginTop: '0.5rem' }}>
           Dashboard Summary for Current Month{user?.name ? ` · ${user.name}` : ''}
         </p>
@@ -116,7 +117,7 @@ export default function RootPage() {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
         {kpiData.map((item) => (
-          <div key={item.label} style={{ background: '#fff', borderRadius: '0.75rem', border: '1px solid #e5e7eb', padding: '1.5rem', boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
+          <div key={item.label} style={{ background: '#fff', borderRadius: '1rem', border: '1px solid #e2e8f0', padding: '1.5rem', boxShadow: 'none' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
               <p style={{ fontSize: '0.75rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>{item.label}</p>
               <div style={{ width: '3rem', height: '3rem', borderRadius: '0.5rem', background: item.iconBg, color: item.iconColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -139,11 +140,11 @@ export default function RootPage() {
               textDecoration: 'none',
               background: action.bg,
               border: 'none',
-              borderRadius: '0.75rem',
+              borderRadius: '1rem',
               padding: '1.5rem',
               cursor: 'pointer',
               textAlign: 'left',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              boxShadow: 'none',
               transition: 'transform 0.15s, box-shadow 0.15s',
             }}
           >

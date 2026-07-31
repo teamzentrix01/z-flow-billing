@@ -255,6 +255,7 @@
           label: "Intelligence",
           icon: "ti-message-chatbot",
           items: [
+            { label: "Trial Accounts", href: "/admin/trials" },
             { label: "Admin Assistant", href: "/admin/assistant" },
             { label: "Recycle Bin", href: "/admin/recycle-bin" },
           ],

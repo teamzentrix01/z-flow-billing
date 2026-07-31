@@ -446,7 +446,7 @@ export default function Topbar({ onMenuOpen, sidebarExpanded = false }) {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-[56px] bg-white/90 backdrop-blur-md border-b border-slate-200/80 z-50 flex items-center px-3 md:px-5 shadow-[0_1px_16px_rgba(15,23,42,0.06)]">
+    <header className="fixed top-0 left-0 right-0 h-[64px] bg-white/95 backdrop-blur-xl border-b border-slate-200 z-50 flex items-center px-3 md:px-6">
 
       {/* Hamburger — mobile only */}
       <button
@@ -467,15 +467,15 @@ export default function Topbar({ onMenuOpen, sidebarExpanded = false }) {
         aria-label="Go to home"
       >
         {sidebarExpanded ? (
-          <img src="/buyzaar-sync-logo.svg" alt="Buyzaar Sync" className="h-12 w-[170px] object-contain" />
+          <img src="/z-flow-logo.svg" alt="Z Flow" className="h-11 w-[170px] object-contain object-left" />
         ) : (
-          <img src="/buyzaar-sync-icon.svg" alt="Buyzaar Sync" className="h-10 w-10 object-contain" />
+          <img src="/z-flow-icon.svg" alt="Z Flow" className="h-10 w-10 object-contain" />
         )}
       </button>
 
       {/* Brand — mobile center */}
       <div className="md:hidden flex-1 flex justify-center">
-        <img src="/buyzaar-sync-logo.svg" alt="Buyzaar Sync" className="h-10 w-[150px] object-contain" />
+        <img src="/z-flow-logo.svg" alt="Z Flow" className="h-10 w-[150px] object-contain" />
       </div>
 
       {/* Page title — desktop */}
@@ -832,7 +832,7 @@ export default function Topbar({ onMenuOpen, sidebarExpanded = false }) {
             onClick={() => setOpenProfile((prev) => !prev)}
             className="flex items-center gap-2 rounded-2xl px-1.5 py-1 transition-colors hover:bg-blue-50"
           >
-            <div className="w-8 h-8 rounded-full bg-[#B00000] flex items-center justify-center flex-shrink-0 shadow-[0_8px_18px_rgba(176,0,0,0.22)]">
+            <div className="w-8 h-8 rounded-full bg-[#0b0d12] flex items-center justify-center flex-shrink-0 shadow-[0_8px_18px_rgba(11,13,18,0.18)]">
               <span className="text-[11px] font-bold text-white">{initials}</span>
             </div>
             <div className="hidden sm:block text-left">
@@ -850,7 +850,7 @@ export default function Topbar({ onMenuOpen, sidebarExpanded = false }) {
             <div className="fixed left-3 right-3 top-[58px] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[0_16px_50px_rgba(15,23,42,0.16)] sm:absolute sm:left-auto sm:right-0 sm:top-[44px] sm:w-[320px]">
               <div className="bg-slate-100 px-4 py-3.5">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-[#B00000] flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-[#0b0d12] flex items-center justify-center">
                     <span className="text-white text-[16px] font-bold">{initials}</span>
                   </div>
                   <div>

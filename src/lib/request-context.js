@@ -47,6 +47,7 @@ export function getCurrentUser(request) {
       role: decoded.role,
       permissions: decoded.permissions || [],
       assigned_stores: decoded.assigned_stores || [],
+      tenant_id: decoded.tenant_id || null,
       token, // Include token for potential refresh scenarios
     };
   } catch (err) {

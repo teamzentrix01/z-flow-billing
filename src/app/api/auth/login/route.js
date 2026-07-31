@@ -11,6 +11,12 @@ import { ensureRolesSchema } from '@/lib/rolesSchema';
 import { ensureSessionsSchema } from '@/lib/sessionsSchema';
 import { ensureAuditLogsSchema } from '@/lib/auditLogsSchema';
 import { applyEffectivePasswordChange, ensurePasswordChangeRequestsTable } from '@/lib/passwordChangeRequests';
+import {
+  activateTenantById,
+  findTrialLogin,
+  getTrialAccessError,
+} from '@/lib/platformTrials';
+import { enterTenantContext } from '@/lib/tenant-context';
 
 const SUPER_ADMIN_FULL_ACCESS = process.env.SUPER_ADMIN_FULL_ACCESS !== 'false';
 
@@ -111,19 +117,39 @@ export async function POST(request) {
     }
 
     // ============================================
-    // STEP 2: FIND USER IN users TABLE
+    // STEP 2: RESOLVE PLATFORM OR TRIAL USER
     // ============================================
 
     debugLog('[LOGIN] Searching for user:', { email: email.toLowerCase() });
 
     let userResult;
+    let trialLogin = null;
     try {
-      userResult = await query(
-        `SELECT id, name, email, phone, password_hash, role, is_active, created_at, updated_at
-         FROM users
-         WHERE LOWER(email) = LOWER($1) AND is_active = TRUE`,
-        [email]
-      );
+      trialLogin = await findTrialLogin(email);
+      if (trialLogin) {
+        const trialAccessError = getTrialAccessError(trialLogin);
+        if (trialAccessError) return unauthorizedError(trialAccessError);
+        const tenant = await activateTenantById(trialLogin.tenant_id);
+        enterTenantContext({
+          tenantId: tenant.id,
+          databaseName: tenant.database_name,
+          trialEndsAt: tenant.trial_ends_at,
+        });
+        userResult = await query(
+          `SELECT id, name, email, phone, password_hash, role, is_active, created_at, updated_at
+           FROM users
+           WHERE id = $1 AND is_active = TRUE
+           LIMIT 1`,
+          [trialLogin.tenant_user_id],
+        );
+      } else {
+        userResult = await query(
+          `SELECT id, name, email, phone, password_hash, role, is_active, created_at, updated_at
+           FROM users
+           WHERE LOWER(email) = LOWER($1) AND is_active = TRUE`,
+          [email],
+        );
+      }
       debugLog('[LOGIN] User query result:', { 
         found: userResult.rows.length > 0,
         rowCount: userResult.rows.length
@@ -234,6 +260,9 @@ export async function POST(request) {
     if (SUPER_ADMIN_FULL_ACCESS && user.role === 'super_admin') {
       permissions = ['*'];
     }
+    if (trialLogin) {
+      permissions = ['*'];
+    }
 
     // ============================================
     // STEP 7: GET USER'S ASSIGNED STORES
@@ -277,6 +306,7 @@ export async function POST(request) {
       role: effectiveRole,
       permissions,
       assigned_stores: assignedStores,
+      tenant_id: trialLogin?.tenant_id || null,
     });
 
     debugLog('[LOGIN] Token payload created:', { 

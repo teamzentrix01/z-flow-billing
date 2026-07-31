@@ -81,7 +81,7 @@ export default function CatalogDashboard() {
               <circle cx="40" cy="40" r="34" fill="none" stroke="#e5e7eb" strokeWidth="6" />
               <circle
                 cx="40" cy="40" r="34" fill="none"
-                stroke="#539D62" strokeWidth="6"
+                stroke="#64748b" strokeWidth="6"
                 strokeDasharray="213.6"
                 strokeDashoffset="0"
                 strokeLinecap="round"

@@ -105,7 +105,7 @@ export default function AppAlertDialog() {
             type="button"
             onClick={close}
             autoFocus
-            className="min-w-[96px] rounded-xl bg-[#B00000] px-4 py-2.5 text-[13px] font-bold text-white shadow-[0_10px_20px_rgba(176,0,0,0.22)] transition-colors hover:bg-[#930000]"
+            className="min-w-[96px] rounded-xl bg-[#0b0d12] px-4 py-2.5 text-[13px] font-bold text-white shadow-[0_10px_20px_rgba(11,13,18,0.18)] transition-colors hover:bg-[#1f2937]"
           >
             OK
           </button>

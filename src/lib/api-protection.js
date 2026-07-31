@@ -10,6 +10,8 @@ import { unauthorizedError, forbiddenError } from '@/lib/api-response';
 import { ensureUsersTable } from '@/lib/userAuth';
 import { ensureAuditLogsSchema } from '@/lib/auditLogsSchema';
 import { ensureRecycleBinSchema } from '@/lib/recycleBinSchema';
+import { activateTenantById } from '@/lib/platformTrials';
+import { enterTenantContext } from '@/lib/tenant-context';
 
 const SUPER_ADMIN_FULL_ACCESS = process.env.SUPER_ADMIN_FULL_ACCESS !== 'false';
 
@@ -24,11 +26,6 @@ function isSystemSuperAdmin(user) {
  */
 export async function extractAuthUser(request) {
   try {
-    await ensureUsersTable();
-    await ensureRecycleBinSchema().catch((err) => {
-      console.warn('[API_PROTECTION] Recycle bin schema could not be ensured:', err.message);
-    });
-
     // Get token from cookies or Authorization header
     const cookieToken = request.cookies.get('access_token')?.value || 
                        request.cookies.get('auth_token')?.value;
@@ -55,6 +52,24 @@ export async function extractAuthUser(request) {
     if (!payload?.sub) {
       return { user: null, token: null, error: 'Invalid or expired token' };
     }
+
+    if (payload.tenant_id) {
+      try {
+        const tenant = await activateTenantById(payload.tenant_id);
+        enterTenantContext({
+          tenantId: tenant.id,
+          databaseName: tenant.database_name,
+          trialEndsAt: tenant.trial_ends_at,
+        });
+      } catch (err) {
+        return { user: null, token: null, error: err.message || 'Trial access unavailable' };
+      }
+    }
+
+    await ensureUsersTable();
+    await ensureRecycleBinSchema().catch((err) => {
+      console.warn('[API_PROTECTION] Recycle bin schema could not be ensured:', err.message);
+    });
 
     // Fetch full user from database
     const userResult = await query(
@@ -127,6 +142,7 @@ export async function extractAuthUser(request) {
       permissions,
       assigned_stores: assignedStores,
       is_employee: hasEmployeeProfile,
+      tenant_id: payload.tenant_id ? Number(payload.tenant_id) : null,
     };
 
     return { user, token, error: null };

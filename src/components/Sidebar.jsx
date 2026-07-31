@@ -80,9 +80,9 @@ export default function Sidebar({
         <div className={`
           hidden md:flex h-12 w-12 items-center justify-center rounded-2xl
           cursor-pointer transition-all duration-200
-          ${isActive ? 'bg-indigo-600 text-white shadow-[0_10px_22px_rgba(176,0,0,0.22)]' : 'text-slate-500 hover:bg-indigo-50 hover:text-indigo-700'}
+          ${isActive ? 'bg-[#0b0d12] text-white shadow-[0_10px_22px_rgba(11,13,18,0.18)]' : 'text-slate-500 hover:bg-blue-50 hover:text-blue-700'}
         `}>
-          {isActive && <span className="absolute -left-2 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-indigo-600" />}
+          {isActive && <span className="absolute -left-2 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-blue-600" />}
           <i className={`ti ${item.icon} text-[22px]`} />
         </div>
 
@@ -90,10 +90,10 @@ export default function Sidebar({
         <div className={`
           md:hidden flex items-center gap-3 px-4 py-3
           cursor-pointer transition-all duration-150 border-b border-gray-100
-          ${isActive ? 'bg-indigo-50 border-l-[3px] border-l-indigo-500' : 'hover:bg-slate-50 border-l-[3px] border-l-transparent'}
+          ${isActive ? 'bg-blue-50 border-l-[3px] border-l-blue-600' : 'hover:bg-slate-50 border-l-[3px] border-l-transparent'}
         `}>
-          <i className={`ti ${item.icon} text-[22px] flex-shrink-0 ${isActive ? 'text-indigo-600' : 'text-slate-700'}`} />
-          <span className={`text-[14px] font-medium ${isActive ? 'text-indigo-700' : 'text-slate-700'}`}>
+          <i className={`ti ${item.icon} text-[22px] flex-shrink-0 ${isActive ? 'text-blue-600' : 'text-slate-700'}`} />
+          <span className={`text-[14px] font-medium ${isActive ? 'text-blue-700' : 'text-slate-700'}`}>
             {item.label}
           </span>
           {item.subSidebar && (
@@ -101,7 +101,7 @@ export default function Sidebar({
           )}
         </div>
 
-        <span className={`pointer-events-none absolute left-[66px] top-1/2 z-[200] hidden w-[290px] -translate-y-1/2 rounded-2xl border border-[#B00000] bg-[#B00000] px-4 py-3.5 text-left shadow-none transition-all duration-200 ease-out md:block ${isHovered ? 'visible translate-x-2 scale-100 opacity-100' : 'invisible translate-x-0 scale-95 opacity-0'}`}>
+        <span className={`pointer-events-none absolute left-[66px] top-1/2 z-[200] hidden w-[290px] -translate-y-1/2 rounded-2xl border border-slate-800 bg-[#0b0d12] px-4 py-3.5 text-left shadow-xl transition-all duration-200 ease-out md:block ${isHovered ? 'visible translate-x-2 scale-100 opacity-100' : 'invisible translate-x-0 scale-95 opacity-0'}`}>
           <span className="flex items-center gap-2 text-[16px] font-extrabold tracking-wide text-white">
             <i className={`ti ${item.icon} text-[19px]`} />
             {item.label}
@@ -152,8 +152,8 @@ export default function Sidebar({
       `}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
           <div>
-            <img src="/buyzaar-sync-logo.svg" alt="Buyzaar Sync" className="h-10 w-auto object-contain" />
-            <p className="text-[10px] text-gray-400">India's No.1 Business App</p>
+            <img src="/z-flow-logo.svg" alt="Z Flow" className="h-10 w-[170px] object-contain object-left" />
+            <p className="text-[10px] text-gray-400">Smarter billing. Stronger business.</p>
           </div>
           <button onClick={onMobileClose} className="p-2 rounded-lg hover:bg-slate-100">
             <i className="ti ti-x text-slate-500 text-[18px]" />
@@ -168,7 +168,7 @@ export default function Sidebar({
 
         <div className="border-t border-gray-100 px-4 py-4">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-full bg-[#0b0d12] flex items-center justify-center">
               <span className="text-[11px] font-bold text-white">AD</span>
             </div>
             <div>
@@ -180,7 +180,7 @@ export default function Sidebar({
       </div>
 
       {expanded ? (
-        <aside className="hidden md:flex fixed left-0 top-[56px] h-[calc(100vh-56px)] w-[240px] flex-col overflow-hidden border-r border-slate-200/80 bg-white/95 z-40 shadow-[2px_0_18px_rgba(15,23,42,0.04)]">
+        <aside className="hidden md:flex fixed left-0 top-[64px] h-[calc(100vh-64px)] w-[240px] flex-col overflow-hidden border-r border-slate-200 bg-white z-40">
           <div className="no-scrollbar grid flex-1 grid-cols-2 content-start gap-2 overflow-y-auto overflow-x-hidden p-3">
             {items.map((item) => (
               <ExpandedNavItem key={item.label} item={item} />
@@ -188,7 +188,7 @@ export default function Sidebar({
           </div>
         </aside>
       ) : (
-      <aside className="hidden md:flex fixed left-0 top-[56px] h-[calc(100vh-56px)] w-[64px] flex-col items-center overflow-visible border-r border-slate-200/80 bg-white/95 z-40 shadow-[2px_0_18px_rgba(15,23,42,0.04)]">
+      <aside className="hidden md:flex fixed left-0 top-[64px] h-[calc(100vh-64px)] w-[64px] flex-col items-center overflow-visible border-r border-slate-200 bg-white z-40">
         {/* <div className="flex w-full justify-center border-b border-slate-100 px-2 py-3">
           <button
             type="button"
@@ -200,7 +200,7 @@ export default function Sidebar({
             title="Open sidebar"
             aria-label="Open sidebar"
           >
-            <img src="/buyzaar-sync-icon.svg" alt="" className="h-8 w-8 object-contain" aria-hidden="true" />
+            <img src="/z-flow-icon.svg" alt="" className="h-8 w-8 object-contain" aria-hidden="true" />
           </button>
         </div> */}
         <div className="no-scrollbar flex-1 space-y-2 overflow-visible px-2 py-3">

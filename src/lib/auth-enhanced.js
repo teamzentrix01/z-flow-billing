@@ -73,6 +73,7 @@ export function signRefreshToken(payload) {
   return jwt.sign(
     {
       sub: payload.sub,
+      tenant_id: payload.tenant_id || null,
       type: 'refresh',
     },
     getJwtSecret(),
@@ -244,6 +245,7 @@ export function createTokenPayload(user) {
     assigned_stores: Array.isArray(user.assigned_stores)
       ? user.assigned_stores
       : JSON.parse(user.assigned_stores || '[]'),
+    tenant_id: user.tenant_id ? Number(user.tenant_id) : null,
   };
 }
 

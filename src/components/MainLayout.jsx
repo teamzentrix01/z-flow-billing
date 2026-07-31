@@ -121,7 +121,7 @@ export default function MainLayout({ children }) {
 
       {/* Desktop SubSidebar panel */}
       {hasAccessibleMenu && subOpen && (
-        <div className="hidden md:block fixed left-[64px] top-[56px] h-[calc(100vh-56px)] z-30 w-[256px] border-r border-slate-200/80 bg-[#fff1f1] shadow-[6px_0_22px_rgba(15,23,42,0.06)] animate-shell-slide-in">
+        <div className="hidden md:block fixed left-[64px] top-[64px] h-[calc(100vh-64px)] z-30 w-[256px] border-r border-slate-200 bg-white shadow-[6px_0_22px_rgba(15,23,42,0.04)] animate-shell-slide-in">
           <SubSidebar
             subSidebar={activeMenu.subSidebar}
             onClose={null}
@@ -148,11 +148,11 @@ export default function MainLayout({ children }) {
       <main
         className={`
           transition-all duration-300
-          mt-[56px]
+          mt-[64px]
           ${hasAccessibleMenu ? (homeSidebarExpanded ? 'md:ml-[240px]' : 'md:ml-[64px]') : 'md:ml-0'}
           ${hasAccessibleMenu && subOpen && !homeSidebarExpanded ? 'md:ml-[320px]' : ''}
-          min-h-[calc(100vh-56px)]
-          p-3 sm:p-5 md:p-6 lg:p-7
+          min-h-[calc(100vh-64px)]
+          p-3 sm:p-5 md:p-7 lg:p-8
           max-w-full overflow-x-hidden
         `}
       >

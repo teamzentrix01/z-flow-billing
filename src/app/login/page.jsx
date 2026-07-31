@@ -209,11 +209,11 @@ function LoginPageContent() {
 
   return (
     <AuthScreen
-      brandTitle="Buyzaar Sync"
-      brandTagline="Manage your storefront, anytime anywhere."
-      leftPanelKicker="Buyzaar Sync"
-      leftPanelTitle="Manage your storefront, anytime anywhere."
-      leftPanelSubtitle="Sign in to your Buyzaar Sync. Track settlements, manage POS terminals, and turn live data into smarter decisions, all in one place."
+      brandTitle="Z Flow"
+      brandTagline="Smarter billing. Stronger business."
+      leftPanelKicker="Z Flow"
+      leftPanelTitle="Sell faster. Control every operation."
+      leftPanelSubtitle="Connect billing, inventory, purchases, customers and every store in one powerful workspace."
       eyebrow="Welcome back."
       title="Sign in to continue."
       subtitle=""
@@ -224,17 +224,17 @@ function LoginPageContent() {
         {/* Email Field */}
         <div>
           <label htmlFor="login-email" className="mb-1.5 block text-[12px] font-medium text-gray-700">
-            Email
+            User ID or email
           </label>
           <div className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-3.5 py-2.5 transition-colors focus-within:border-blue-400 focus-within:bg-white">
             <i className="ti ti-user text-[16px] text-gray-400" />
             <input
               id="login-email"
-              type="email"
+              type="text"
               name="email"
               value={form.email}
               onChange={onChange}
-              placeholder="admin@buyzaarsync.com"
+              placeholder="Enter your User ID"
               required
               disabled={loading}
               className="w-full bg-transparent text-[13px] text-gray-900 outline-none placeholder:text-gray-400 disabled:cursor-not-allowed disabled:opacity-50"

@@ -76,7 +76,7 @@ export default function MasterDashboardPage() {
     );
   }
 
-  const COLORS = ['#B00000', '#539D62', '#f59e0b', '#ef4444', '#8b5cf6'];
+  const COLORS = ['#0b0d12', '#64748b', '#94a3b8', '#cbd5e1', '#334155'];
   const staffWindowSource = Array.isArray(data.staff_productivity) ? data.staff_productivity : [];
   const staffQueryNormalized = staffQuery.trim().toLowerCase();
   const staffWindow = staffQueryNormalized
@@ -288,8 +288,8 @@ export default function MasterDashboardPage() {
                   <LineChart data={data.sales_trends}>
                     <defs>
                       <linearGradient id="salesGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#B00000" stopOpacity={0.15}/>
-                        <stop offset="95%" stopColor="#B00000" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="#0b0d12" stopOpacity={0.15}/>
+                        <stop offset="95%" stopColor="#0b0d12" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
@@ -300,8 +300,8 @@ export default function MasterDashboardPage() {
                       contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '11px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
                     />
                     <Legend wrapperStyle={{ fontSize: '11px', fontWeight: 700 }} />
-                    <Line type="monotone" dataKey="sales" stroke="#B00000" name="Sales" strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
-                    <Line type="monotone" dataKey="profit" stroke="#539D62" name="Profit" strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
+                    <Line type="monotone" dataKey="sales" stroke="#0b0d12" name="Sales" strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
+                    <Line type="monotone" dataKey="profit" stroke="#64748b" name="Profit" strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -323,8 +323,8 @@ export default function MasterDashboardPage() {
                       contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '11px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
                     />
                     <Legend wrapperStyle={{ fontSize: '11px', fontWeight: 700 }} />
-                    <Bar dataKey="sales" fill="#B00000" name="Sales" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="profit" fill="#539D62" name="Profit" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="sales" fill="#0b0d12" name="Sales" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="profit" fill="#64748b" name="Profit" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

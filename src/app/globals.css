@@ -2,11 +2,11 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-  --brand-red: #B00000;
-  --brand-green: #539D62;
-  --brand-red-rgb: 176, 0, 0;
-  --brand-green-rgb: 83, 157, 98;
+  --foreground: #0b0d12;
+  --brand-red: #0b0d12;
+  --brand-green: #0b0d12;
+  --brand-red-rgb: 11, 13, 18;
+  --brand-green-rgb: 11, 13, 18;
 }
 
 @theme inline {
@@ -14,26 +14,26 @@
   --color-foreground: var(--foreground);
   --color-brand-red: var(--brand-red);
   --color-brand-green: var(--brand-green);
-  --color-blue-50: #fff1f1;
-  --color-blue-100: #ffe0e0;
-  --color-blue-200: #ffc7c7;
-  --color-blue-300: #ff9f9f;
-  --color-blue-400: #f86b6b;
-  --color-blue-500: #dc2626;
+  --color-blue-50: #f8fafc;
+  --color-blue-100: #f1f5f9;
+  --color-blue-200: #e2e8f0;
+  --color-blue-300: #cbd5e1;
+  --color-blue-400: #94a3b8;
+  --color-blue-500: #334155;
   --color-blue-600: var(--brand-red);
-  --color-blue-700: #920000;
-  --color-blue-800: #780000;
-  --color-blue-900: #5f0000;
-  --color-indigo-50: #fff1f1;
-  --color-indigo-100: #ffe0e0;
-  --color-indigo-200: #ffc7c7;
-  --color-indigo-300: #ff9f9f;
-  --color-indigo-400: #f86b6b;
-  --color-indigo-500: #dc2626;
+  --color-blue-700: #111827;
+  --color-blue-800: #0f172a;
+  --color-blue-900: #0b0d12;
+  --color-indigo-50: #f8fafc;
+  --color-indigo-100: #f1f5f9;
+  --color-indigo-200: #e2e8f0;
+  --color-indigo-300: #cbd5e1;
+  --color-indigo-400: #94a3b8;
+  --color-indigo-500: #334155;
   --color-indigo-600: var(--brand-red);
-  --color-indigo-700: #920000;
-  --color-indigo-800: #780000;
-  --color-indigo-900: #5f0000;
+  --color-indigo-700: #111827;
+  --color-indigo-800: #0f172a;
+  --color-indigo-900: #0b0d12;
   --color-violet-50: #fff1f1;
   --color-violet-100: #ffe0e0;
   --color-violet-200: #ffc7c7;
@@ -147,8 +147,8 @@
 
 body {
   background:
-    radial-gradient(circle at top, rgba(176, 0, 0, 0.08), transparent 32%),
-    linear-gradient(180deg, #fffafa 0%, #f7fbf8 100%);
+    radial-gradient(circle at 45% 0%, rgba(15, 23, 42, 0.045), transparent 28rem),
+    #f8fafc;
   color: var(--foreground);
   font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   min-width: 320px;
@@ -159,7 +159,7 @@ body {
 }
 
 ::selection {
-  background: rgba(176, 0, 0, 0.16);
+  background: rgba(15, 23, 42, 0.16);
   color: #111827;
 }
 
@@ -266,7 +266,7 @@ button {
 
 .form-input:focus {
   border-color: var(--brand-red);
-  box-shadow: 0 0 0 3px rgba(176, 0, 0, 0.16);
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.12);
 }
 
 @media (max-width: 640px) {
