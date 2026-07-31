@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import MainLayout from '@/components/MainLayout';
+import { chartPalette } from '@/lib/chartPalette';
 import { formatIndianDate } from '@/lib/dateUtils';
 import {
   Bar,
@@ -529,8 +530,8 @@ function OverviewContent({ stats, recentMovements, stockoutForecast, stockoutGra
                       <XAxis dataKey="shortName" tick={{ fontSize: 12 }} interval={0} height={60} angle={-15} textAnchor="end" />
                       <YAxis />
                       <Tooltip />
-                      <Line type="monotone" dataKey="currentStock" stroke="#0b0d12" strokeWidth={2.5} dot={{ r: 3 }} name="Current stock" />
-                      <Line type="monotone" dataKey="reorderLevel" stroke="#f59e0b" strokeWidth={2.5} dot={{ r: 3 }} name="Reorder level" />
+                      <Line type="monotone" dataKey="currentStock" stroke={chartPalette.blue} strokeWidth={2.5} dot={{ r: 3 }} name="Current stock" />
+                      <Line type="monotone" dataKey="reorderLevel" stroke={chartPalette.amber} strokeWidth={2.5} dot={{ r: 3 }} name="Reorder level" />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>

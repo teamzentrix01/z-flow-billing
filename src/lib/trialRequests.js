@@ -42,7 +42,13 @@ export function generateOtp() {
 }
 
 export function generateTemporaryPassword() {
-  return `Zf!${crypto.randomBytes(9).toString('base64url')}`;
+  const readableLetters = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+  const letters = Array.from(
+    { length: 4 },
+    () => readableLetters[crypto.randomInt(0, readableLetters.length)],
+  ).join('');
+  const digits = crypto.randomInt(1000, 10000);
+  return `Zf@${digits}${letters}`;
 }
 
 export function validateTrialRequest(input) {

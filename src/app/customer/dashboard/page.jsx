@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import MainLayout from '@/components/MainLayout';
+import { chartPalette } from '@/lib/chartPalette';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 const emptyDashboard = {
@@ -126,7 +127,7 @@ export default function CustomerDashboardPage() {
                   tickLine={false}
                 />
                 <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e5e7eb' }} />
-                <Line type="monotone" dataKey="value" stroke="#94a3b8" strokeWidth={1.8} dot={{ fill: '#94a3b8', r: 3 }} />
+                <Line type="monotone" dataKey="value" stroke={chartPalette.blue} strokeWidth={2.4} dot={{ fill: chartPalette.blue, r: 3 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -149,7 +150,7 @@ export default function CustomerDashboardPage() {
                   tickLine={false}
                 />
                 <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e5e7eb' }} />
-                <Line type="monotone" dataKey="value" stroke="#0b0d12" strokeWidth={1.8} dot={{ fill: '#0b0d12', r: 3 }} />
+                <Line type="monotone" dataKey="value" stroke={chartPalette.green} strokeWidth={2.4} dot={{ fill: chartPalette.green, r: 3 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>

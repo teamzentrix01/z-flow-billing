@@ -25,7 +25,7 @@ export default function AuthScreen({
           <div className="relative flex h-full flex-col justify-between gap-5">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <img src="/z-flow-logo.svg" alt={brandTitle} className="h-14 w-[210px] rounded bg-white object-contain object-left" />
+                <img src="/zflow-logo.png" alt={brandTitle} className="h-14 w-[210px] rounded bg-white object-contain object-left" />
                 <p className="mt-1 text-[10px] leading-tight text-slate-300">{brandTagline}</p>
               </div>
 
@@ -117,7 +117,7 @@ export default function AuthScreen({
                 </div>
 
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-100">
-                  <img src="/z-flow-icon.svg" alt="" className="h-8 w-8 object-contain" aria-hidden="true" />
+                  <img src="/zflow-logo.png" alt="" className="h-8 w-12 object-contain" aria-hidden="true" />
                 </div>
               </div>
 

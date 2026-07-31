@@ -152,7 +152,7 @@ export default function Sidebar({
       `}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
           <div>
-            <img src="/z-flow-logo.svg" alt="Z Flow" className="h-10 w-[170px] object-contain object-left" />
+            <img src="/zflow-logo.png" alt="Z Flow" className="h-10 w-[170px] object-contain object-left" />
             <p className="text-[10px] text-gray-400">Smarter billing. Stronger business.</p>
           </div>
           <button onClick={onMobileClose} className="p-2 rounded-lg hover:bg-slate-100">

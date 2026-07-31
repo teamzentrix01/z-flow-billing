@@ -467,15 +467,15 @@ export default function Topbar({ onMenuOpen, sidebarExpanded = false }) {
         aria-label="Go to home"
       >
         {sidebarExpanded ? (
-          <img src="/z-flow-logo.svg" alt="Z Flow" className="h-11 w-[170px] object-contain object-left" />
+          <img src="/zflow-logo.png" alt="Z Flow" className="h-11 w-[170px] object-contain object-left" />
         ) : (
-          <img src="/z-flow-icon.svg" alt="Z Flow" className="h-10 w-10 object-contain" />
+          <img src="/zflow-logo.png" alt="Z Flow" className="h-10 w-[58px] object-contain" />
         )}
       </button>
 
       {/* Brand — mobile center */}
       <div className="md:hidden flex-1 flex justify-center">
-        <img src="/z-flow-logo.svg" alt="Z Flow" className="h-10 w-[150px] object-contain" />
+        <img src="/zflow-logo.png" alt="Z Flow" className="h-10 w-[150px] object-contain" />
       </div>
 
       {/* Page title — desktop */}
