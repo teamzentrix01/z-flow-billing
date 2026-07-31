@@ -58,7 +58,6 @@ export async function POST(request) {
       return NextResponse.json({
         success: true,
         requestId: result.rows[0].id,
-        ...(process.env.NODE_ENV !== 'production' ? { developmentOtp: otp } : {}),
       });
     }
     if (body.action === 'verify_otp') {
