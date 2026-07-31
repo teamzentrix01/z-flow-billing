@@ -156,8 +156,10 @@ export async function createTrialTenant({
 
   const safeDays = Math.min(Math.max(Number(trialDays) || 14, 1), 90);
   const safePermissions = sanitizeTrialPermissions(permissions);
+  const provisioningStamp = Date.now().toString(36);
+  const tenantSlug = `${normalizedSlug}-${provisioningStamp}`.slice(0, 80);
   const databaseName = assertDatabaseName(
-    `zflow_trial_${normalizedSlug.replace(/-/g, '_')}_${Date.now().toString(36)}`,
+    `zflow_trial_${normalizedSlug.replace(/-/g, '_')}_${provisioningStamp}`,
   );
 
   const tenantResult = await masterQuery(
@@ -167,7 +169,7 @@ export async function createTrialTenant({
      RETURNING *`,
     [
       String(organizationName).trim(),
-      normalizedSlug,
+      tenantSlug,
       databaseName,
       safeDays,
       Math.max(Number(maxUsers) || 3, 1),

@@ -166,17 +166,50 @@ export async function provisionTenantDatabase(databaseName) {
   }
 
   const maintenancePool = new Pool({ ...maintenanceConfig, max: 1 });
+  let lockAcquired = false;
   try {
+    await maintenancePool.query(`SELECT pg_advisory_lock(hashtext('zflow_trial_provision'))`);
+    lockAcquired = true;
     const existing = await maintenancePool.query(
       'SELECT 1 FROM pg_database WHERE datname = $1',
       [safeDatabaseName],
     );
     if (existing.rowCount === 0) {
+      // A dedicated template must not accept normal client connections. Tools such as
+      // pgAdmin automatically reconnect after termination, which otherwise races with
+      // CREATE DATABASE ... TEMPLATE and causes PostgreSQL error 55006.
       await maintenancePool.query(
-        `CREATE DATABASE "${safeDatabaseName}" TEMPLATE "${templateName}"`,
+        `ALTER DATABASE "${templateName}" WITH ALLOW_CONNECTIONS false`,
       );
+      let lastError;
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        await maintenancePool.query(
+          `SELECT pg_terminate_backend(pid)
+           FROM pg_stat_activity
+           WHERE datname = $1
+             AND pid <> pg_backend_pid()`,
+          [templateName],
+        );
+        try {
+          await maintenancePool.query(
+            `CREATE DATABASE "${safeDatabaseName}" TEMPLATE "${templateName}"`,
+          );
+          lastError = null;
+          break;
+        } catch (error) {
+          lastError = error;
+          if (error.code !== '55006' || attempt === 2) throw error;
+          await new Promise((resolve) => setTimeout(resolve, 150 * (attempt + 1)));
+        }
+      }
+      if (lastError) throw lastError;
     }
   } finally {
+    if (lockAcquired) {
+      await maintenancePool
+        .query(`SELECT pg_advisory_unlock(hashtext('zflow_trial_provision'))`)
+        .catch(() => {});
+    }
     await maintenancePool.end();
   }
 }
