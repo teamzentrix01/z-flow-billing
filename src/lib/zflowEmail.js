@@ -1,7 +1,27 @@
+import nodemailer from 'nodemailer';
+
+let transporter;
+
+function getTransporter() {
+  if (transporter) return transporter;
+  const host = process.env.SMTP_HOST;
+  const port = Number(process.env.SMTP_PORT || 465);
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASSWORD;
+  if (!host || !user || !pass) return null;
+  transporter = nodemailer.createTransport({
+    host,
+    port,
+    secure: String(process.env.SMTP_SECURE ?? port === 465).toLowerCase() === 'true',
+    auth: { user, pass: pass.replace(/\s+/g, '') },
+  });
+  return transporter;
+}
+
 export async function sendZFlowEmail({ to, subject, html }) {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.ZFLOW_EMAIL_FROM;
-  if (!apiKey || !from) {
+  const mailer = getTransporter();
+  const from = process.env.ZFLOW_EMAIL_FROM || process.env.SMTP_USER;
+  if (!mailer || !from) {
     if (process.env.NODE_ENV === 'production') {
       throw new Error('Email delivery is not configured');
     }
@@ -9,20 +29,11 @@ export async function sendZFlowEmail({ to, subject, html }) {
     return { id: 'development-email' };
   }
 
-  let response;
   try {
-    response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ from, to: [to], subject, html }),
-    });
-  } catch {
+    const result = await mailer.sendMail({ from, to, subject, html });
+    return { id: result.messageId };
+  } catch (error) {
+    console.error('[ZFLOW SMTP]', error.message);
     throw new Error('Email provider is temporarily unavailable');
   }
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(payload.message || 'Email delivery failed');
-  return payload;
 }
