@@ -131,6 +131,30 @@ export default function TrialAccountsPage() {
     }
   };
 
+  const deleteTrial = async (trial) => {
+    const confirmed = window.confirm(
+      `Delete ${trial.organizationName}? This permanently deletes its isolated database and cannot be undone.`,
+    );
+    if (!confirmed) return;
+    setError('');
+    setMessage('');
+    try {
+      const response = await fetch('/api/platform/trials', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: trial.id }),
+      });
+      const payload = await response.json();
+      if (!response.ok || payload.success === false) {
+        throw new Error(payload.message || 'Unable to delete trial');
+      }
+      setMessage('Trial workspace deleted successfully.');
+      await loadTrials();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   return (
     <MainLayout>
       <div className="mx-auto max-w-[1500px] space-y-7">
@@ -380,6 +404,13 @@ export default function TrialAccountsPage() {
                           }`}
                         >
                           {trial.status === 'suspended' ? 'Activate' : 'Suspend'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => deleteTrial(trial)}
+                          className="rounded-lg border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-700 hover:bg-rose-50"
+                        >
+                          Delete
                         </button>
                       </div>
                     </div>

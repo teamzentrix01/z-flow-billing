@@ -222,4 +222,44 @@ export async function provisionTenantDatabase(databaseName) {
   }
 }
 
+export async function dropTenantDatabase(databaseName) {
+  const safeDatabaseName = assertDatabaseName(databaseName);
+  const directDatabaseUrl = process.env.DATABASE_URL_UNPOOLED || '';
+  const maintenanceConfig = directDatabaseUrl
+    ? {
+        connectionString: directDatabaseUrl,
+        ssl: String(process.env.DB_SSL || '').toLowerCase() === 'true' || /sslmode=require/i.test(directDatabaseUrl)
+          ? { rejectUnauthorized: false }
+          : false,
+      }
+    : tenantPoolConfig(safeDatabaseName);
+
+  if (maintenanceConfig.connectionString) {
+    const url = new URL(maintenanceConfig.connectionString);
+    url.pathname = `/${process.env.PG_MAINTENANCE_DB || 'postgres'}`;
+    maintenanceConfig.connectionString = url.toString();
+  } else {
+    maintenanceConfig.database = process.env.PG_MAINTENANCE_DB || 'postgres';
+  }
+
+  const cachedPool = tenantPools.get(safeDatabaseName);
+  if (cachedPool) {
+    tenantPools.delete(safeDatabaseName);
+    await cachedPool.end().catch(() => {});
+  }
+
+  const maintenancePool = new Pool({ ...maintenanceConfig, max: 1 });
+  try {
+    await maintenancePool.query(
+      `SELECT pg_terminate_backend(pid)
+       FROM pg_stat_activity
+       WHERE datname = $1 AND pid <> pg_backend_pid()`,
+      [safeDatabaseName],
+    );
+    await maintenancePool.query(`DROP DATABASE IF EXISTS "${safeDatabaseName}"`);
+  } finally {
+    await maintenancePool.end();
+  }
+}
+
 export default masterPool;

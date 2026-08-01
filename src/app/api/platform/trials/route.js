@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { requireAuth, requireRole } from '@/lib/api-protection';
 import {
   createTrialTenant,
+  deleteTrialTenant,
   ensurePlatformTrialSchema,
   updateTrialTenant,
 } from '@/lib/platformTrials';
@@ -118,6 +119,24 @@ export async function PATCH(request) {
   } catch (error) {
     return NextResponse.json(
       { success: false, message: error.message || 'Unable to update trial' },
+      { status: 400 },
+    );
+  }
+}
+
+export async function DELETE(request) {
+  try {
+    const auth = await requirePlatformSuperAdmin(request);
+    if (auth.error) return auth.error;
+    const body = await request.json();
+    const tenant = await deleteTrialTenant(body.id);
+    if (!tenant) {
+      return NextResponse.json({ success: false, message: 'Trial not found' }, { status: 404 });
+    }
+    return NextResponse.json({ success: true, message: 'Trial workspace deleted' });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, message: error.message || 'Unable to delete trial' },
       { status: 400 },
     );
   }

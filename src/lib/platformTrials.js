@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { masterQuery, provisionTenantDatabase, tenantQuery } from '@/lib/db';
+import { dropTenantDatabase, masterQuery, provisionTenantDatabase, tenantQuery } from '@/lib/db';
 import { enterTenantContext } from '@/lib/tenant-context';
 import { sanitizeTrialPermissions } from '@/lib/trialPermissions';
 
@@ -261,4 +261,18 @@ export async function updateTrialTenant(id, changes = {}) {
     [Number(id), status, extensionDays],
   );
   return result.rows[0] || null;
+}
+
+export async function deleteTrialTenant(id) {
+  await ensurePlatformTrialSchema();
+  const result = await masterQuery(
+    'SELECT id, database_name, organization_name FROM platform_tenants WHERE id = $1',
+    [Number(id)],
+  );
+  const tenant = result.rows[0];
+  if (!tenant) return null;
+
+  await dropTenantDatabase(tenant.database_name);
+  await masterQuery('DELETE FROM platform_tenants WHERE id = $1', [tenant.id]);
+  return tenant;
 }
