@@ -38,6 +38,8 @@ export default function TrialAccountsPage() {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -131,13 +133,12 @@ export default function TrialAccountsPage() {
     }
   };
 
-  const deleteTrial = async (trial) => {
-    const confirmed = window.confirm(
-      `Delete ${trial.organizationName}? This permanently deletes its isolated database and cannot be undone.`,
-    );
-    if (!confirmed) return;
+  const deleteTrial = async () => {
+    if (!deleteTarget) return;
+    const trial = deleteTarget;
     setError('');
     setMessage('');
+    setDeleting(true);
     try {
       const response = await fetch('/api/platform/trials', {
         method: 'DELETE',
@@ -149,9 +150,12 @@ export default function TrialAccountsPage() {
         throw new Error(payload.message || 'Unable to delete trial');
       }
       setMessage('Trial workspace deleted successfully.');
+      setDeleteTarget(null);
       await loadTrials();
     } catch (err) {
       setError(err.message);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -407,7 +411,7 @@ export default function TrialAccountsPage() {
                         </button>
                         <button
                           type="button"
-                          onClick={() => deleteTrial(trial)}
+                          onClick={() => setDeleteTarget(trial)}
                           className="rounded-lg border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-700 hover:bg-rose-50"
                         >
                           Delete
@@ -420,6 +424,49 @@ export default function TrialAccountsPage() {
             )}
           </section>
         </div>
+
+        {deleteTarget && (
+          <div
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-trial-title"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget && !deleting) setDeleteTarget(null);
+            }}
+          >
+            <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-50 text-2xl text-rose-600">
+                <i className="ti ti-trash" />
+              </div>
+              <h2 id="delete-trial-title" className="mt-5 text-xl font-semibold text-slate-950">
+                Delete trial workspace?
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                <span className="font-semibold text-slate-900">{deleteTarget.organizationName}</span>{' '}
+                and its isolated database will be permanently deleted. This action cannot be undone.
+              </p>
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  type="button"
+                  disabled={deleting}
+                  onClick={() => setDeleteTarget(null)}
+                  className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={deleting}
+                  onClick={deleteTrial}
+                  className="rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {deleting ? 'Deleting...' : 'Delete workspace'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </MainLayout>
   );
